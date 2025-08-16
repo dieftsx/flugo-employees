@@ -1,25 +1,20 @@
 import React from 'react';
-import logo from './flugo_logo.png';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RegisterEmployeePage from './pages/RegisterEmployeePage';
+import EmployeeListPage from './pages/EmployeeListPage';
+import DashboardPage from './pages/DashboardPage';
+import GlobalStyles from './assets/styles/globalStyles';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <GlobalStyles />
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/register" element={<RegisterEmployeePage />} />
+        <Route path="/employees" element={<EmployeeListPage />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import BasicInfoStep from './BasicInfoStep';
 import ProfessionalInfoStep from './ProfessionalInfoStep';
-import FormStepper from './FormStepper';
-import SuccessDialog from '../SuccessDialog';
-import { Employee } from '../../../types/employeeTypes';
-import { employeeService } from '../../../api/firebaseService';
-import { validateName, validateEmail, validateDepartment } from '../../../utils/validation';
-
+import FormStepper from '../EmployeeForm/FormStepper';
+import SuccessDialog from '../employees/SuccessDialog';
+import type { Employee } from '../../types/employeeTypes';
+import { employeeService } from '../../api/firebaseService';
+import { validateName, validateEmail, validateDepartament } from '../../utils/validation';
 
 const EmployeeForm: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0)
@@ -47,7 +46,7 @@ const EmployeeForm: React.FC = () => {
   }
 
   const handleNext = () => {
-    if (!validateName(activeStep)) return;
+    if (!validateStep(activeStep)) return;
 
     if (activeStep === steps.length - 1) {
       submitForm();
@@ -103,45 +102,44 @@ const EmployeeForm: React.FC = () => {
 
 
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 2}}>
-      <Box sx={{mb:3}}>
-        <Typography variant='h5' component='div' sx={{fontWeight: 'bold'}}>Flugo          
+    <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant='h5' component='div' sx={{ fontWeight: 'bold' }}>
+          Flugo
         </Typography>
         <Typography variant='subtitle1' color='text.secondary'>
           Colaboradores / Cadastrar Colaborador
         </Typography>
       </Box>
-      <FormStepper 
+      <FormStepper
         activeStep={activeStep}
         steps={steps}
-        />
-        <Box sx={{my:4}}>
-          {getStepContent()}
-        </Box>
-        Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button 
-          variant="outlined" 
-          onClick={handleBack} 
+      />
+      <Box sx={{ my: 4 }}>
+        {getStepContent()}
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button
+          variant="outlined"
+          onClick={handleBack}
           disabled={activeStep === 0}
         >
           Voltar
         </Button>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           onClick={handleNext}
         >
           {activeStep === steps.length - 1 ? 'Salvar' : 'Próximo'}
         </Button>
       </Box>
-      
-      <SuccessDialog 
-        open={success} 
-        onClose={() => setSuccess(false)} 
-        employee={newEmployee} 
+      <SuccessDialog
+        open={success}
+        onClose={() => setSuccess(false)}
+        employee={newEmployee}
       />
     </Paper>
   )
+
 }
-
-
 export default EmployeeForm
