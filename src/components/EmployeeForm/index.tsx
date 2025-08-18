@@ -8,7 +8,10 @@ import type { Employee } from '../../types/employeeTypes';
 import { employeeService } from '../../api/firebaseService';
 import { validateName, validateEmail, validateDepartament } from '../../utils/validation';
 
+import { useAuth } from '../../context/AuthContext';
+
 const EmployeeForm: React.FC = () => {
+  const {currentUser} = useAuth()
   const [activeStep, setActiveStep] = useState(0)
   const [formData, setFormData] = useState<Employee>({
     name: '',
@@ -25,7 +28,6 @@ const EmployeeForm: React.FC = () => {
   const handleChange = (field: keyof Employee, value: string) => {
     setFormData(prev => ({...prev, [field]: value}))
 
-    // Clear error when field changes
     if(errors[field]) {
       setErrors(prev => ({...prev, [field]: ''}))
     }
@@ -61,7 +63,7 @@ const EmployeeForm: React.FC = () => {
 
   const submitForm = async () => {
     try {
-      const id = await employeeService.addEmployee(formData)
+      const id = await employeeService.addEmployee(formData, currentUser.uid)
       setNewEmployee({...formData, id})
       setSuccess(true);
       resetForm();

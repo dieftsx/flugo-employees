@@ -15,7 +15,7 @@ const DashboardPage: React.FC = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Paper 
-              component={Link} 
+              component={Link as React.ElementType}
               to="/register" 
               elevation={3} 
               sx={{ 

@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { auth, User, signInWithGoogle, logout } from '../api/firebaseService'
+import { auth, signInWithGoogle, logout } from '../api/firebaseService'
 
 interface AuthContextType {
-    currentUser: User | null
+    currentUser: any | null
     loading: boolean
     loginWithGoogle: () => Promise<void>
     logout: () => Promise<void>

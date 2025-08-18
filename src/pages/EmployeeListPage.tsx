@@ -1,52 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { 
+  Container, Box, Typography, Button, Paper, 
+  Table, TableBody, TableCell, TableContainer, 
+  TableHead, TableRow, CircularProgress 
+} from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Employee } from '../types/employeeTypes';
 import AppBar from '../components/layout/AppBar';
-
-// Mock data - substituir por chamada real ao Firebase
-const mockEmployees: Employee[] = [
-  {
-    id: '1',
-    name: 'Fernanda Torres',
-    email: 'fernandatorres@flugo.com',
-    department: 'Design',
-    status: 'Ativo',
-    createdAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Joana D\'Arc',
-    email: 'joanadarc@flugo.com',
-    department: 'TI',
-    status: 'Ativo',
-    createdAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Mari Froes',
-    email: 'marifroes@flugo.com',
-    department: 'Marketing',
-    status: 'Ativo',
-    createdAt: new Date(),
-  },
-  {
-    id: '4',
-    name: 'Clera Costa',
-    email: 'clerascosta@flugo.com',
-    department: 'Produto',
-    status: 'Inativo',
-    createdAt: new Date(),
-  },
-];
+import { useAuth } from '../context/AuthContext';
+import { employeeService } from '../api/firebaseService'
 
 const EmployeeListPage: React.FC = () => {
+  const { currentUser } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simular busca de dados
-    setEmployees(mockEmployees);
-  }, []);
+    const fetchEmployees = async () => {
+      if (currentUser) {
+        setLoading(true);
+        try {
+          const employeesFromService = await employeeService.getEmployees(currentUser.uid);
+          // Corrige o tipo, adicionando a propriedade 'departament' se estiver faltando
+          const employeesCorrigidos: Employee[] = employeesFromService.map((emp: any) => ({
+            ...emp,
+            departament: emp.departament ?? '', // valor padrão se não existir
+          }));
+          setEmployees(employeesCorrigidos);
+        } catch (error) {
+          console.error('Erro ao buscar colaboradores:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchEmployees();
+  }, [currentUser]);
 
   return (
     <Container maxWidth="lg">
@@ -66,45 +56,67 @@ const EmployeeListPage: React.FC = () => {
           </Button>
         </Box>
 
-        <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: 'primary.main' }}>
-                <TableRow>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>E-mail</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Departamento</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {employees.map((employee) => (
-                  <TableRow key={employee.id} hover>
-                    <TableCell>{employee.name}</TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>{employee.department}</TableCell>
-                    <TableCell>
-                      <Box 
-                        component="span" 
-                        sx={{
-                          bgcolor: employee.status === 'Ativo' ? 'success.main' : 'error.main',
-                          color: 'white',
-                          py: 0.5,
-                          px: 2,
-                          borderRadius: 4,
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        {employee.status}
-                      </Box>
-                    </TableCell>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress size={60} />
+          </Box>
+        ) : employees.length === 0 ? (
+          <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom>
+              Nenhum colaborador cadastrado
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              Você ainda não cadastrou nenhum colaborador. Clique no botão abaixo para começar.
+            </Typography>
+            <Button 
+              variant="contained" 
+              component={Link} 
+              to="/register"
+            >
+              Cadastrar Primeiro Colaborador
+            </Button>
+          </Paper>
+        ) : (
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+            <TableContainer>
+              <Table>
+                <TableHead sx={{ bgcolor: 'primary.main' }}>
+                  <TableRow>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>E-mail</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Departamento</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+                </TableHead>
+                <TableBody>
+                  {employees.map((employee) => (
+                    <TableRow key={employee.id} hover>
+                      <TableCell>{employee.name}</TableCell>
+                      <TableCell>{employee.email}</TableCell>
+                      <TableCell>{employee.departament}</TableCell>
+                      <TableCell>
+                        <Box 
+                          component="span" 
+                          sx={{
+                            bgcolor: employee.status === 'Ativo' ? 'success.main' : 'error.main',
+                            color: 'white',
+                            py: 0.5,
+                            px: 2,
+                            borderRadius: 4,
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {employee.status}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        )}
       </Box>
     </Container>
   );
