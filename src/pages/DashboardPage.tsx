@@ -38,12 +38,12 @@ const DashboardPage: React.FC = () => {
               </Typography>
             </Paper>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
-            <Paper 
-              component={Link} 
-              to="/employees" 
-              elevation={3} 
+            <Paper
+              component={Link as React.ElementType}
+              to="/employees"
+              elevation={3}
               sx={{ 
                 p: 4, 
                 textAlign: 'center', 

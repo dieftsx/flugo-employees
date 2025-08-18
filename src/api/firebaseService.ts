@@ -1,59 +1,108 @@
-import {initializeApp} from "firebase/app"
-import { getAuth, signInAnonymously} from "firebase/auth"
-import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore"
+import { initializeApp } from "firebase/app";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut,
+  User
+} from "firebase/auth";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  getDocs, 
+  query,
+  where,
+  DocumentData,
+  QueryDocumentSnapshot
+} from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
-}
+  apiKey: "AIzaSyCEzhrvCPjNNEmp1kSd4P7u2l8XUUDNMH8",
+  authDomain: "flugo-employees.firebaseapp.com",
+  projectId: "flugo-employees",
+  storageBucket: "flugo-employees.firebasestorage.app",
+  messagingSenderId: "336318601807",
+  appId: "1:336318601807:web:163014d8ecfea554c3283a"
+};
 
-// Initialize firebase
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
-const db = getFirestore(app)
+// Initialize Firebase Authentication and get a reference to the service
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 
+// Initialize Cloud Firestore and get a reference to the service
+export const db = getFirestore(app);
 
-// Authenticate anonymously
-//
-export const authenticateAnonymously = async () = {
+// Firebase Auth functions
+export const signInWithGoogle = async () => {
   try {
-    await signInAnonymously(auth)
-    console.log("Authenticated anonymously")
-  } catch(error) {
-    console.error("Anonymous authentication failed", error)
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    console.error("Error signing in with Google", error);
+    throw error;
   }
-}
+};
 
-// Employee service
+export const logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Error signing out", error);
+    throw error;
+  }
+};
+
+// Firestore functions for employees
+const docToEmployee = (doc: QueryDocumentSnapshot<DocumentData>): Employee => {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    name: data.name,
+    email: data.email,
+    department: data.department,
+    status: data.status || 'Ativo',
+    createdAt: data.createdAt?.toDate() || new Date(),
+    userId: data.userId
+  };
+};
 
 export const employeeService = {
-  addEmployee: async (employeeData: Employee) => {
+  addEmployee: async (employeeData: Omit<Employee, 'id'>, userId: string): Promise<string> => {
     try {
       const docRef = await addDoc(collection(db, "employees"), {
         ...employeeData,
-        status: "Ativo",
+        userId,
         createdAt: new Date()
-      })
+      });
       return docRef.id;
     } catch (error) {
-      console.error("Error adding employee:", error)
+      console.error("Error adding employee: ", error);
       throw error;
     }
   },
-  getEmployees: async () => {
-    // Implementar conforme necessário
+  
+  getEmployees: async (userId: string): Promise<Employee[]> => {
+    try {
+      const q = query(collection(db, "employees"), where("userId", "==", userId));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(docToEmployee);
+    } catch (error) {
+      console.error("Error getting employees: ", error);
+      return [];
+    }
   }
-}
+};
 
 export interface Employee {
+  id?: string;
   name: string;
   email: string;
-  departament: string;
-  status?: string;
+  department: string;
+  status: string;
   createdAt?: Date;
+  userId?: string;
 }

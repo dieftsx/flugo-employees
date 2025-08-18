@@ -1,5 +1,6 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, SelectProps } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import type { SelectProps } from '@mui/material/Select';
 
 interface CustomSelectProps extends SelectProps {
   label: string;
@@ -27,7 +28,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, options, ...props })
               borderWidth: '1px',
             },
           },
-          ...props.sx,
+          ...(props.sx ? props.sx : {}),
         }}
       >
         {options.map((option) => (

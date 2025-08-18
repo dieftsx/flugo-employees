@@ -7,12 +7,22 @@ const GlobalStyles = () => (
         backgroundColor: '#f5f7fa',
         margin: 0,
         padding: 0,
-        fontFamily: '"Inter", sans-serif',
       },
       '#root': {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
+      },
+      a: {
+        textDecoration: 'none',
+        color: 'inherit',
+      },
+      '.MuiTable-root': {
+        borderCollapse: 'separate',
+        borderSpacing: '0 8px',
+      },
+      '.MuiTableCell-root': {
+        borderBottom: 'none',
       },
     }}
   />
