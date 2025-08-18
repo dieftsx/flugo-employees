@@ -10,13 +10,14 @@ import {
   MenuItem,
   IconButton
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Logout } from '@mui/icons-material';
 
 const AppBar: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,6 +30,7 @@ const AppBar: React.FC = () => {
   const handleLogout = () => {
     handleMenuClose();
     logout();
+    navigate('/login');
   };
 
   return (

@@ -1,15 +1,28 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import type { SelectProps } from '@mui/material/Select';
+import { 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  SxProps,
+  Theme
+} from '@mui/material';
+import { SelectProps } from '@mui/material';
 
-interface CustomSelectProps extends SelectProps {
+interface CustomSelectProps extends Omit<SelectProps, 'label'> {
   label: string;
   options: Array<{ value: string; label: string }>;
+  sx?: SxProps<Theme>;
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ label, options, ...props }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({ 
+  label, 
+  options, 
+  sx,
+  ...props 
+}) => {
   return (
-    <FormControl fullWidth margin="normal">
+    <FormControl fullWidth margin="normal" sx={sx}>
       <InputLabel>{label}</InputLabel>
       <Select
         label={label}
@@ -28,7 +41,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, options, ...props })
               borderWidth: '1px',
             },
           },
-          ...(props.sx ? props.sx : {}),
         }}
       >
         {options.map((option) => (

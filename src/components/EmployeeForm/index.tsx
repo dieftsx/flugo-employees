@@ -61,16 +61,34 @@ const EmployeeForm: React.FC = () => {
     setActiveStep(prev => prev - 1)
   }
 
-  const submitForm = async () => {
-    try {
-      const id = await employeeService.addEmployee(formData, currentUser.uid)
-      setNewEmployee({...formData, id})
-      setSuccess(true);
-      resetForm();
-    } catch (error) {
-      console.error('Error Submitting Form:', error)
-    }
+ const submitForm = async () => {
+  if(!currentUser) {
+    console.error("User not Authenticated")
+    return
   }
+  try {
+    const employeeData: Omit<Employee, 'id'> = {
+      name: formData.name,
+      email: formData.email,
+      departament: formData.departament,
+      status: formData.status
+    }
+
+    // Corrigindo o nome do campo para 'department' conforme esperado pelo serviço
+    const employeeDataComDepartamento: Omit<Employee, 'id'> & { department: string } = {
+      ...employeeData,
+      department: formData.departament
+    };
+    delete (employeeDataComDepartamento as any).departament;
+
+    const id = await employeeService.addEmployee(employeeDataComDepartamento, currentUser.uid);
+    setNewEmployee({ ...formData, id });
+    setSuccess(true);
+    resetForm();
+  } catch (error) {
+    console.error('Error submitting form:', error);
+  }
+};
 
   const resetForm = () => {
     setFormData({

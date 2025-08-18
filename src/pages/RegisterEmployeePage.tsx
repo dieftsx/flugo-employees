@@ -4,12 +4,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import EmployeeForm from '../components/EmployeeForm';
 import AppBar from '../components/layout/AppBar';
 import theme from '../assets/styles/theme';
-import { authenticateAnonymously } from '../api/firebaseService';
 
 const RegisterEmployeePage: React.FC = () => {
-  useEffect(() => {
-    authenticateAnonymously();
-  }, []);
+  
 
   return (
     <ThemeProvider theme={theme}>

@@ -5,10 +5,8 @@ import RegisterEmployeePage from './pages/RegisterEmployeePage';
 import EmployeeListPage from './pages/EmployeeListPage';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import AppBar from './components/layout/AppBar';
 import { Box, CircularProgress } from '@mui/material';
 
-// Componente de rota protegida
 const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { currentUser, loading } = useAuth();
 

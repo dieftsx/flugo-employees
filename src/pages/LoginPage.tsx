@@ -1,23 +1,31 @@
-import React from "react";
-import { Container, Box, Typography, Button, Paper, CircularProgress } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
-import AppBar from "../components/layout/AppBar";
+import React, { useEffect } from 'react';
+import { Container, Box, Typography, Button, Paper, CircularProgress } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import AppBar from '../components/layout/AppBar';
 
 const LoginPage: React.FC = () => {
-    const { loginWithGoogle, loading } = useAuth()
+  const { loginWithGoogle, loading, currentUser } = useAuth();
+  const navigate = useNavigate();
 
-const handleLogin = async () => {
-    try {
-        await loginWithGoogle()
-    } catch (error) {
-        console.error("failed to Login", error)
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
     }
-}
+  }, [currentUser, navigate]);
 
-    return (
-        <Container maxWidth="sm">
-            <AppBar />
-            <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  const handleLogin = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      console.error("Failed to login", error);
+    }
+  };
+
+  return (
+    <Container maxWidth="sm">
+      <AppBar />
+      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Paper elevation={3} sx={{ p: 4, width: '100%', textAlign: 'center' }}>
           <Typography variant="h5" component="h1" gutterBottom>
             Acesso ao Sistema
@@ -47,11 +55,8 @@ const handleLogin = async () => {
           )}
         </Paper>
       </Box>
+    </Container>
+  );
+};
 
-        </Container>
-
-
-    )
-}
-
-export default LoginPage
+export default LoginPage;

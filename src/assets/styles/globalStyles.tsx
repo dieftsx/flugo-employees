@@ -1,12 +1,16 @@
 import { GlobalStyles as MuiGlobalStyles } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-const GlobalStyles = () => (
-  <MuiGlobalStyles
-    styles={{
+const GlobalStylesComponent = () => {
+  const theme = useTheme();
+  
+  return (
+    <MuiGlobalStyles styles={{
       body: {
         backgroundColor: '#f5f7fa',
         margin: 0,
         padding: 0,
+        fontFamily: '"Inter", sans-serif',
       },
       '#root': {
         minHeight: '100vh',
@@ -24,8 +28,8 @@ const GlobalStyles = () => (
       '.MuiTableCell-root': {
         borderBottom: 'none',
       },
-    }}
-  />
-);
+    }} />
+  );
+};
 
-export default GlobalStyles;
+export default GlobalStylesComponent;
