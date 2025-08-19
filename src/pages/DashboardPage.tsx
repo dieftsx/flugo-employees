@@ -7,17 +7,7 @@ const DashboardPage: React.FC = () => {
   return (
     <MainLayout>
       <Container maxWidth="lg" sx={{ mt: 2 }}>
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          sx={{ 
-            color: '#166534', 
-            fontWeight: 'bold',
-            mb: 4
-          }}
-        >
-          Dashboard
-        </Typography>
+
         
         <Box sx={{ 
           display: 'flex', 
@@ -35,13 +25,7 @@ const DashboardPage: React.FC = () => {
                 textDecoration: 'none', 
                 display: 'block',
                 backgroundColor: 'white',
-                border: '2px solid #22C55E',
-                '&:hover': {
-                  boxShadow: 6,
-                  transform: 'translateY(-4px)',
-                  transition: 'all 0.3s ease',
-                  backgroundColor: '#F0FDF4'
-                }
+
               }}
             >
               <Box sx={{ 
@@ -85,13 +69,7 @@ const DashboardPage: React.FC = () => {
                 textDecoration: 'none', 
                 display: 'block',
                 backgroundColor: 'white',
-                border: '2px solid #22C55E',
-                '&:hover': {
-                  boxShadow: 6,
-                  transform: 'translateY(-4px)',
-                  transition: 'all 0.3s ease',
-                  backgroundColor: '#F0FDF4'
-                }
+
               }}
             >
               <Box sx={{ 

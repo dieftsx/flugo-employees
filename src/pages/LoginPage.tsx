@@ -26,7 +26,30 @@ const LoginPage: React.FC = () => {
     <Container maxWidth="sm">
       <AppBar />
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      
         <Paper elevation={3} sx={{ p: 4, width: '100%', textAlign: 'center' }}>
+           {/* Logo Flugo - Centralizada no topo */}
+           <Box sx={{ 
+            position: 'absolute', 
+            top: 30,
+            left: '50%', 
+            transform: 'translateX(-50%)',
+            width:120,
+            height: 78,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <Box 
+              component="img" 
+              src="/flugo_logo.png" 
+              alt="Flugo Logo" 
+              sx={{ 
+                width: 75, 
+                height: 28,
+              }} 
+            />
+          </Box>
           <Typography variant="h5" component="h1" gutterBottom>
             Acesso ao Sistema
           </Typography>
@@ -44,7 +67,7 @@ const LoginPage: React.FC = () => {
               startIcon={
                 <Box 
                   component="img" 
-                  src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" 
+                  src="/google.svg" 
                   alt="Google" 
                   sx={{ width: 24, height: 24 }}
                 />

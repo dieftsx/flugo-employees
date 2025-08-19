@@ -7,7 +7,7 @@ import SuccessDialog from '../employees/SuccessDialog';
 import { Employee } from '../../types/employeeTypes';
 import { employeeService } from '../../api/firebaseService';
 import { useAuth } from '../../context/AuthContext';
-import { validateName, validateEmail, validateDepartament } from '../../utils/validation';
+import { validateName, validateEmail, validateDepartament, validateGender } from '../../utils/validation';
 
 const EmployeeForm: React.FC = () => {
   const { currentUser } = useAuth();
@@ -16,6 +16,7 @@ const EmployeeForm: React.FC = () => {
     name: '',
     email: '',
     departament: '',
+    gender: 'male',
     status: 'Ativo'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,6 +43,7 @@ const EmployeeForm: React.FC = () => {
       newErrors.email = validateEmail(formData.email);
     } else if (step === 1) {
       newErrors.department = validateDepartament(formData.departament);
+      newErrors.gender = validateGender(formData.gender)
     }
     
     setErrors(newErrors);
@@ -75,11 +77,25 @@ const EmployeeForm: React.FC = () => {
       const employeeData = {
         name: formData.name,
         email: formData.email,
-        department: formData.departament,
+        departament: formData.departament,
         status: formData.status
       };
-      
-      const id = await employeeService.addEmployee(employeeData, currentUser.uid);
+
+      // Corrigindo o nome do campo para 'departament' conforme esperado pelo tipo Employee
+      const employeeDataCorrigido = {
+        name: formData.name,
+        email: formData.email,
+        departament: formData.departament,
+        status: formData.status
+      // Incluindo o campo 'gender' conforme exigido pelo tipo Employee
+      };
+
+      const employeeDataCompleto = {
+        ...employeeDataCorrigido,
+        gender: formData.gender
+      };
+
+      const id = await employeeService.addEmployee(employeeDataCompleto, currentUser.uid);
       setNewEmployee({ ...formData, id });
       setSuccess(true);
       resetForm();
@@ -90,7 +106,7 @@ const EmployeeForm: React.FC = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', email: '', departament: '', status: 'Ativo' });
+    setFormData({ name: '', email: '', departament: '', gender:'male', status: 'Ativo' });
     setActiveStep(0);
     setErrors({});
   };

@@ -3,6 +3,7 @@ export interface Employee {
   name: string;
   email: string;
   departament: string;
+  gender: 'male' | 'female';
   status: string;
   createdAt?: Date;
 }

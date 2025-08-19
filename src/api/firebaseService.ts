@@ -63,7 +63,8 @@ const docToEmployee = (doc: QueryDocumentSnapshot<DocumentData>): Employee => {
     id: doc.id,
     name: data.name,
     email: data.email,
-    department: data.department,
+    departament: data.departament,
+    gender: data.gender || 'male',
     status: data.status || 'Ativo',
     createdAt: data.createdAt?.toDate() || new Date(),
     userId: data.userId
@@ -101,7 +102,8 @@ export interface Employee {
   id?: string;
   name: string;
   email: string;
-  department: string;
+  departament: string;
+  gender: string,
   status: string;
   createdAt?: Date;
   userId?: string;

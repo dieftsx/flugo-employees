@@ -15,3 +15,9 @@ export const validateDepartament = (departament: string): string => {
   if(!departament) return "Departamento é Obrigatório";
   return "";
 }
+
+export const validateGender = (gender: string): string => {
+  if (!gender) return "Gênero é obrigatório"
+  return ""
+}
+

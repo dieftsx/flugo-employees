@@ -40,7 +40,6 @@ const AppBar: React.FC = () => {
       sx={{ 
         backgroundColor: 'white', 
         color: '#1F2937',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         mb: 3
       }}
     >

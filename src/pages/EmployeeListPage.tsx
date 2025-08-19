@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { 
   Container, Box, Typography, Button, Paper, 
   Table, TableBody, TableCell, TableContainer, 
-  TableHead, TableRow, CircularProgress 
+  TableHead, TableRow, CircularProgress,
+  Avatar // Importe o Avatar
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Employee } from '../types/employeeTypes';
 import MainLayout from '../components/layout/MainLayout';
 import { useAuth } from '../context/AuthContext';
 import { employeeService } from '../api/firebaseService';
+import { generateRandomAvatar } from '../utils/avatarUtils'
 
 const EmployeeListPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -21,12 +23,12 @@ const EmployeeListPage: React.FC = () => {
         setLoading(true);
         try {
           const employeesFromService = await employeeService.getEmployees(currentUser.uid);
-          // Corrige o problema de tipos garantindo que todos os campos necessários existam
-          const employeesCompletos: Employee[] = employeesFromService.map((emp: any) => ({
+          // Faz o mapeamento para garantir que todos os campos do tipo Employee estejam presentes
+          const employees: Employee[] = employeesFromService.map((emp: any) => ({
             ...emp,
-            departament: emp.departament ?? '', // Garante que o campo 'departament' exista
+            gender: emp.gender ?? '', // ou defina um valor padrão apropriado
           }));
-          setEmployees(employeesCompletos);
+          setEmployees(employees);
         } catch (error) {
           console.error('Erro ao buscar colaboradores:', error);
         } finally {
@@ -102,16 +104,24 @@ const EmployeeListPage: React.FC = () => {
             <TableContainer>
               <Table>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#22C55E' }}>
-                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>E-mail</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Departamento</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
+                  <TableRow sx={{ backgroundColor: '#BDC3C7' }}>
+                    <TableCell sx={{ color: '#212B36', fontWeight: 'bold', width: '70px' }}></TableCell>
+                    <TableCell sx={{ color: '#212B36', fontWeight: 'bold'}}>Nome</TableCell>
+                    <TableCell sx={{ color: '#212B36', fontWeight: 'bold' }}>E-mail</TableCell>
+                    <TableCell sx={{ color: '#212B36', fontWeight: 'bold' }}>Departamento</TableCell>
+                    <TableCell sx={{ color: '#212B36', fontWeight: 'bold' }}>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {employees.map((employee) => (
                     <TableRow key={employee.id} hover>
+                      <TableCell>
+                        <Avatar 
+                          src={generateRandomAvatar(employee.gender, employee.name)} 
+                          alt={employee.name}
+                          sx={{ width: 48, height: 48, border: '2px solid #22C55E' }}
+                        />
+                      </TableCell>
                       <TableCell>{employee.name}</TableCell>
                       <TableCell>{employee.email}</TableCell>
                       <TableCell>{employee.departament}</TableCell>

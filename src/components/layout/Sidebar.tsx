@@ -79,8 +79,7 @@ const Sidebar: React.FC = () => {
           '& .MuiDrawer-paper': {
             width: open ? 240 : 60,
             boxSizing: 'border-box',
-            backgroundColor: '#22C55E',
-            color: 'white',
+            color: '#637381',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
@@ -100,10 +99,18 @@ const Sidebar: React.FC = () => {
         >
           {open && (
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Flugo
+              <Box 
+              component="img" 
+              src="/flugo_logo.png" 
+              alt="Flugo Logo" 
+              sx={{ 
+                width: 75, 
+                height: 28,
+              }} 
+            />
             </Typography>
           )}
-          <IconButton onClick={toggleSidebar} sx={{ color: 'white' }}>
+          <IconButton onClick={toggleSidebar} sx={{ color: '#637381' }}>
             {open ? <ChevronLeft /> : <ChevronRight />}
           </IconButton>
         </Box>
@@ -122,13 +129,11 @@ const Sidebar: React.FC = () => {
                       minHeight: 48,
                       justifyContent: open ? 'initial' : 'center',
                       px: 2.5,
-                      backgroundColor: isActive(item.path) ? '#15803D' : 'transparent',
-                      '&:hover': {
-                        backgroundColor: '#15803D',
-                      },
+                     
+                
                     }}
                   >
-                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', color: 'white' }}>
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', color: '#637381' }}>
                       {item.icon}
                     </ListItemIcon>
                     <ListItemText 
@@ -146,12 +151,8 @@ const Sidebar: React.FC = () => {
                       minHeight: 48,
                       justifyContent: open ? 'initial' : 'center',
                       px: 2.5,
-                      backgroundColor: item.subItems.some(sub => isActive(sub.path)) 
-                        ? '#15803D' 
-                        : 'transparent',
-                      '&:hover': {
-                        backgroundColor: '#15803D',
-                      },
+                    
+               
                     }}
                   >
                     <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', color: 'white' }}>
@@ -175,10 +176,7 @@ const Sidebar: React.FC = () => {
                           sx={{
                             pl: 8,
                             minHeight: 48,
-                            backgroundColor: isActive(subItem.path) ? '#0F5A2D' : 'transparent',
-                            '&:hover': {
-                              backgroundColor: '#0F5A2D',
-                            },
+                          
                           }}
                         >
                           <ListItemIcon sx={{ minWidth: 0, mr: 3, color: 'white' }}>
