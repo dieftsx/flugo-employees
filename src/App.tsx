@@ -6,6 +6,7 @@ import EmployeeListPage from './pages/EmployeeListPage';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Box, CircularProgress } from '@mui/material';
+import EditEmployeePage from './pages/EditEmployeePage';
 
 const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { currentUser, loading } = useAuth();
@@ -48,6 +49,15 @@ function App() {
             element={
               <PrivateRoute>
                 <EmployeeListPage />
+              </PrivateRoute>
+            } 
+          />
+          {/* Nova rota para edição */}
+          <Route 
+            path="/edit-employee/:id" 
+            element={
+              <PrivateRoute>
+                <EditEmployeePage />
               </PrivateRoute>
             } 
           />

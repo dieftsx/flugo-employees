@@ -50,7 +50,7 @@ const DashboardPage: React.FC = () => {
                   👥
                 </Box>
               </Box>
-              <Typography variant="h5" color="#166534" fontWeight="bold" gutterBottom>
+              <Typography variant="h5" color="#BDC3C7" fontWeight="bold" gutterBottom>
                 Lista de Colaboradores
               </Typography>
               <Typography color="text.secondary">

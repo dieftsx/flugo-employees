@@ -14,7 +14,11 @@ import {
   query,
   where,
   DocumentData,
-  QueryDocumentSnapshot
+  QueryDocumentSnapshot,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -83,6 +87,51 @@ export const employeeService = {
     } catch (error) {
       console.error("Error adding employee: ", error);
       throw error;
+    }
+  },
+  getEmployeeById: async (id: string): Promise<Employee> => {
+    try {
+      const docRef = doc(db, "employees", id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          name: data.name,
+          email: data.email,
+          departament: data.department,
+          gender: data.gender || 'male',
+          status: data.status || 'Ativo',
+          createdAt: data.createdAt?.toDate(),
+          userId: data.userId
+        };
+      } else {
+        throw new Error("Document not found");
+      }
+    } catch (error) {
+      console.error("Error getting employee: ", error);
+      throw error;
+    }
+  },
+
+  updateEmployee: async (id: string, employeeData:Partial<Employee>): Promise<void> => {
+    try {
+      const docRef = doc(db, "employees", id)
+      await updateDoc(docRef, employeeData)
+    } catch (error) {
+      console.error('Error updating employee', error)
+      throw error
+    }
+  },
+
+  deleteEmployee: async (id: string):Promise<void> => {
+    try {
+      const docRef = doc(db, "employees", id)
+      await deleteDoc(docRef)
+    } catch (error) {
+      console.error("Error deleting employee:", error)
+      throw error
     }
   },
   

@@ -8,11 +8,20 @@ import { Employee } from '../../types/employeeTypes';
 import { employeeService } from '../../api/firebaseService';
 import { useAuth } from '../../context/AuthContext';
 import { validateName, validateEmail, validateDepartament, validateGender } from '../../utils/validation';
+import { useNavigate } from 'react-router-dom';
 
-const EmployeeForm: React.FC = () => {
+interface EmployeeFormProps {
+ initialData?: Employee
+ isEditMode?: boolean
+}
+
+
+
+const EmployeeForm: React.FC<EmployeeFormProps> = ({ initialData, isEditMode = false }) => {
+  const navigate = useNavigate()
   const { currentUser } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState<Employee>({
+  const [formData, setFormData] = useState<Employee>(initialData || {
     name: '',
     email: '',
     departament: '',
@@ -73,37 +82,23 @@ const EmployeeForm: React.FC = () => {
     }
 
     try {
-      // Garanta que todos os campos estão presentes
-      const employeeData = {
-        name: formData.name,
-        email: formData.email,
-        departament: formData.departament,
-        status: formData.status
-      };
-
-      // Corrigindo o nome do campo para 'departament' conforme esperado pelo tipo Employee
-      const employeeDataCorrigido = {
-        name: formData.name,
-        email: formData.email,
-        departament: formData.departament,
-        status: formData.status
-      // Incluindo o campo 'gender' conforme exigido pelo tipo Employee
-      };
-
-      const employeeDataCompleto = {
-        ...employeeDataCorrigido,
-        gender: formData.gender
-      };
-
-      const id = await employeeService.addEmployee(employeeDataCompleto, currentUser.uid);
-      setNewEmployee({ ...formData, id });
-      setSuccess(true);
-      resetForm();
+      if (isEditMode && formData.id) {
+        await employeeService.updateEmployee(formData.id, formData)
+        setSuccess(true)
+        setTimeout(() => navigate('/employees'), 1500)
+      } else {
+        const id = await employeeService.addEmployee(formData, currentUser.uid)
+        setNewEmployee({...formData, id})
+        setSuccess(true)
+        resetForm()
+        setTimeout(() => navigate('/employees'), 1500)
+      } 
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmissionError("Erro ao salvar colaborador. Tente novamente.");
+      console.error ('Error submiting form:', error)
+      setSubmissionError('Erro ao salvar Colaborador. tente novamente')
     }
-  };
+     
+  }
 
   const resetForm = () => {
     setFormData({ name: '', email: '', departament: '', gender:'male', status: 'Ativo' });
@@ -147,7 +142,7 @@ const EmployeeForm: React.FC = () => {
           Flugo
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          Colaboradores / Cadastrar Colaborador
+          {isEditMode ? 'Editar Colaborador' : 'Colaboradores / Cadastrar Colaborador'}
         </Typography>
       </Box>
       
@@ -199,7 +194,8 @@ const EmployeeForm: React.FC = () => {
       <SuccessDialog 
         open={success} 
         onClose={() => setSuccess(false)} 
-        employee={newEmployee} 
+        employee={newEmployee || formData} 
+        isEditMode={isEditMode}
       />
     </Paper>
   );
