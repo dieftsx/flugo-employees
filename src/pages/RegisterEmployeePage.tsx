@@ -1,21 +1,15 @@
-import React, { useEffect } from 'react';
-import { Container, CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { Container } from '@mui/material';
 import EmployeeForm from '../components/EmployeeForm';
-import AppBar from '../components/layout/AppBar';
-import theme from '../assets/styles/theme';
+import MainLayout from '../components/layout/MainLayout';
 
 const RegisterEmployeePage: React.FC = () => {
-  
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppBar />
-      <Container maxWidth="md" sx={{ py: 6 }}>
+    <MainLayout>
+      <Container maxWidth="md" sx={{ py: 2 }}>
         <EmployeeForm />
       </Container>
-    </ThemeProvider>
+    </MainLayout>
   );
 };
 

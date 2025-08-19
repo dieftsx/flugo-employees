@@ -6,9 +6,9 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Employee } from '../types/employeeTypes';
-import AppBar from '../components/layout/AppBar';
+import MainLayout from '../components/layout/MainLayout';
 import { useAuth } from '../context/AuthContext';
-import { employeeService } from '../api/firebaseService'
+import { employeeService } from '../api/firebaseService';
 
 const EmployeeListPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -21,12 +21,12 @@ const EmployeeListPage: React.FC = () => {
         setLoading(true);
         try {
           const employeesFromService = await employeeService.getEmployees(currentUser.uid);
-          // Corrige o tipo, adicionando a propriedade 'departament' se estiver faltando
-          const employeesCorrigidos: Employee[] = employeesFromService.map((emp: any) => ({
+          // Corrige o problema de tipos garantindo que todos os campos necessários existam
+          const employeesCompletos: Employee[] = employeesFromService.map((emp: any) => ({
             ...emp,
-            departament: emp.departament ?? '', // valor padrão se não existir
+            departament: emp.departament ?? '', // Garante que o campo 'departament' exista
           }));
-          setEmployees(employeesCorrigidos);
+          setEmployees(employeesCompletos);
         } catch (error) {
           console.error('Erro ao buscar colaboradores:', error);
         } finally {
@@ -39,18 +39,33 @@ const EmployeeListPage: React.FC = () => {
   }, [currentUser]);
 
   return (
-    <Container maxWidth="lg">
-      <AppBar />
-      <Box sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4" component="h1" color="primary.main">
+    <MainLayout>
+      <Container maxWidth="lg">
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 4,
+          backgroundColor: '#DCFCE7',
+          p: 3,
+          borderRadius: 2
+        }}>
+          <Typography variant="h4" fontWeight="bold" color="#166534">
             Colaboradores
           </Typography>
           <Button 
             variant="contained" 
             component={Link} 
             to="/register"
-            sx={{ py: 1.5, px: 3, fontWeight: 'bold' }}
+            sx={{ 
+              py: 1.5, 
+              px: 3, 
+              fontWeight: 'bold',
+              backgroundColor: '#22C55E',
+              '&:hover': {
+                backgroundColor: '#16A34A'
+              }
+            }}
           >
             Novo Colaborador
           </Button>
@@ -72,6 +87,12 @@ const EmployeeListPage: React.FC = () => {
               variant="contained" 
               component={Link} 
               to="/register"
+              sx={{
+                backgroundColor: '#22C55E',
+                '&:hover': {
+                  backgroundColor: '#16A34A'
+                }
+              }}
             >
               Cadastrar Primeiro Colaborador
             </Button>
@@ -80,8 +101,8 @@ const EmployeeListPage: React.FC = () => {
           <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <TableContainer>
               <Table>
-                <TableHead sx={{ bgcolor: 'primary.main' }}>
-                  <TableRow>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#22C55E' }}>
                     <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
                     <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>E-mail</TableCell>
                     <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Departamento</TableCell>
@@ -98,7 +119,7 @@ const EmployeeListPage: React.FC = () => {
                         <Box 
                           component="span" 
                           sx={{
-                            bgcolor: employee.status === 'Ativo' ? 'success.main' : 'error.main',
+                            bgcolor: employee.status === 'Ativo' ? '#22C55E' : '#EF4444',
                             color: 'white',
                             py: 0.5,
                             px: 2,
@@ -117,8 +138,8 @@ const EmployeeListPage: React.FC = () => {
             </TableContainer>
           </Paper>
         )}
-      </Box>
-    </Container>
+      </Container>
+    </MainLayout>
   );
 };
 

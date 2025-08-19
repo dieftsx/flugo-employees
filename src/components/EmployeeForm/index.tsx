@@ -1,105 +1,99 @@
 import React, { useState } from 'react';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, Button } from '@mui/material';
 import BasicInfoStep from './BasicInfoStep';
 import ProfessionalInfoStep from './ProfessionalInfoStep';
-import FormStepper from '../EmployeeForm/FormStepper';
+import FormStepper from './FormStepper';
 import SuccessDialog from '../employees/SuccessDialog';
-import type { Employee } from '../../types/employeeTypes';
+import { Employee } from '../../types/employeeTypes';
 import { employeeService } from '../../api/firebaseService';
+import { useAuth } from '../../context/AuthContext';
 import { validateName, validateEmail, validateDepartament } from '../../utils/validation';
 
-import { useAuth } from '../../context/AuthContext';
-
 const EmployeeForm: React.FC = () => {
-  const {currentUser} = useAuth()
-  const [activeStep, setActiveStep] = useState(0)
+  const { currentUser } = useAuth();
+  const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState<Employee>({
     name: '',
     email: '',
     departament: '',
-    status: 'Ativo',    
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [success, setSuccess] = useState(false)
-  const [newEmployee, setNewEmployee] = useState<Employee | null>(null)
+    status: 'Ativo'
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [success, setSuccess] = useState(false);
+  const [newEmployee, setNewEmployee] = useState<Employee | null>(null);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
-  const steps = ['Informações Básicas', 'Informações Profissionais']
+  const steps = ['Informações Básicas', 'Informações Profissionais'];
 
   const handleChange = (field: keyof Employee, value: string) => {
-    setFormData(prev => ({...prev, [field]: value}))
-
-    if(errors[field]) {
-      setErrors(prev => ({...prev, [field]: ''}))
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Clear error when field changes
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
-  }
+  };
 
   const validateStep = (step: number): boolean => {
-    const newErrors: Record<string, string> = {}
-
-    if(step === 0) {
-      newErrors.name = validateName(formData.name)
-      newErrors.email = validateEmail(formData.email)
-    } else if(step === 1) {
-      newErrors.departament = validateDepartament(formData.departament)
+    const newErrors: Record<string, string> = {};
+    
+    if (step === 0) {
+      newErrors.name = validateName(formData.name);
+      newErrors.email = validateEmail(formData.email);
+    } else if (step === 1) {
+      newErrors.department = validateDepartament(formData.departament);
     }
-
-    setErrors(newErrors)
-    return !Object.values(newErrors).some(error => error !== '')
-  }
+    
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error !== '');
+  };
 
   const handleNext = () => {
     if (!validateStep(activeStep)) return;
-
+    
     if (activeStep === steps.length - 1) {
       submitForm();
     } else {
-      setActiveStep(prev => prev + 1)
+      setActiveStep(prev => prev + 1);
     }
-  }
+  };
 
   const handleBack = () => {
-    setActiveStep(prev => prev - 1)
-  }
+    setActiveStep(prev => prev - 1);
+  };
 
- const submitForm = async () => {
-  if(!currentUser) {
-    console.error("User not Authenticated")
-    return
-  }
-  try {
-    const employeeData: Omit<Employee, 'id'> = {
-      name: formData.name,
-      email: formData.email,
-      departament: formData.departament,
-      status: formData.status
+  const submitForm = async () => {
+    setSubmissionError(null);
+    
+    if (!currentUser) {
+      setSubmissionError("Usuário não autenticado");
+      return;
     }
 
-    // Corrigindo o nome do campo para 'department' conforme esperado pelo serviço
-    const employeeDataComDepartamento: Omit<Employee, 'id'> & { department: string } = {
-      ...employeeData,
-      department: formData.departament
-    };
-    delete (employeeDataComDepartamento as any).departament;
-
-    const id = await employeeService.addEmployee(employeeDataComDepartamento, currentUser.uid);
-    setNewEmployee({ ...formData, id });
-    setSuccess(true);
-    resetForm();
-  } catch (error) {
-    console.error('Error submitting form:', error);
-  }
-};
+    try {
+      // Garanta que todos os campos estão presentes
+      const employeeData = {
+        name: formData.name,
+        email: formData.email,
+        department: formData.departament,
+        status: formData.status
+      };
+      
+      const id = await employeeService.addEmployee(employeeData, currentUser.uid);
+      setNewEmployee({ ...formData, id });
+      setSuccess(true);
+      resetForm();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmissionError("Erro ao salvar colaborador. Tente novamente.");
+    }
+  };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      email: '',
-      departament: '',
-      status: 'Ativo',
-    })
-    setErrors({})
-    setActiveStep(0)
-  }
+    setFormData({ name: '', email: '', departament: '', status: 'Ativo' });
+    setActiveStep(0);
+    setErrors({});
+  };
 
   const getStepContent = () => {
     switch (activeStep) {
@@ -120,46 +114,79 @@ const EmployeeForm: React.FC = () => {
     }
   };
 
-
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+    <Paper elevation={3} sx={{ p: 4, borderRadius: 3, bgcolor: '#F0FDF9' }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant='h5' component='div' sx={{ fontWeight: 'bold' }}>
+        <Typography 
+          variant="h5" 
+          component="div" 
+          sx={{ 
+            fontWeight: 'bold',
+            color: '#166534',
+            borderBottom: '2px solid #22C55E',
+            pb: 1,
+            mb: 2
+          }}
+        >
           Flugo
         </Typography>
-        <Typography variant='subtitle1' color='text.secondary'>
+        <Typography variant="subtitle1" color="text.secondary">
           Colaboradores / Cadastrar Colaborador
         </Typography>
       </Box>
-      <FormStepper
-        activeStep={activeStep}
-        steps={steps}
+      
+      <FormStepper 
+        activeStep={activeStep} 
+        steps={steps} 
       />
+      
       <Box sx={{ my: 4 }}>
         {getStepContent()}
       </Box>
+      
+      {submissionError && (
+        <Typography color="error" sx={{ mb: 2, textAlign: 'center' }}>
+          {submissionError}
+        </Typography>
+      )}
+      
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          variant="outlined"
-          onClick={handleBack}
+        <Button 
+          variant="outlined" 
+          onClick={handleBack} 
           disabled={activeStep === 0}
+          sx={{
+            borderColor: '#22C55E',
+            color: '#166534',
+            '&:hover': {
+              backgroundColor: '#DCFCE7',
+              borderColor: '#16A34A'
+            }
+          }}
         >
           Voltar
         </Button>
         <Button
           variant="contained"
           onClick={handleNext}
+          sx={{
+            backgroundColor: '#22C55E',
+            '&:hover': {
+              backgroundColor: '#16A34A'
+            }
+          }}
         >
           {activeStep === steps.length - 1 ? 'Salvar' : 'Próximo'}
         </Button>
       </Box>
-      <SuccessDialog
-        open={success}
-        onClose={() => setSuccess(false)}
-        employee={newEmployee}
+      
+      <SuccessDialog 
+        open={success} 
+        onClose={() => setSuccess(false)} 
+        employee={newEmployee} 
       />
     </Paper>
-  )
+  );
+};
 
-}
-export default EmployeeForm
+export default EmployeeForm;
