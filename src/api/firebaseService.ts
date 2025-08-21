@@ -22,12 +22,12 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCEzhrvCPjNNEmp1kSd4P7u2l8XUUDNMH8",
-  authDomain: "flugo-employees.firebaseapp.com",
-  projectId: "flugo-employees",
-  storageBucket: "flugo-employees.firebasestorage.app",
-  messagingSenderId: "336318601807",
-  appId: "1:336318601807:web:163014d8ecfea554c3283a"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
@@ -127,14 +127,22 @@ export const employeeService = {
 
   deleteEmployee: async (id: string):Promise<void> => {
     try {
+      if (!id) {
+        throw new Error ("ID do colaborador é necessário pra exclusão")
+      }
+      console.log("Deletando colaborador com ID:", id)
       const docRef = doc(db, "employees", id)
       await deleteDoc(docRef)
+      console.log("Colaborador deletado com sucesso")
     } catch (error) {
-      console.error("Error deleting employee:", error)
-      throw error
+      console.error("Erro ao deletar colaborador:", error);
+      if (error instanceof Error) {
+        throw new Error(`Falha ao excluir colaborador: ${error.message}`);
+      } else {
+        throw new Error("Falha ao excluir colaborador: erro desconhecido");
+      }
     }
   },
-  
   getEmployees: async (userId: string): Promise<Employee[]> => {
     try {
       const q = query(collection(db, "employees"), where("userId", "==", userId));

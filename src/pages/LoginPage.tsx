@@ -25,13 +25,13 @@ const LoginPage: React.FC = () => {
   return (
     <Container maxWidth="sm">
       <AppBar />
-      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box sx={{ mt: 30, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       
         <Paper elevation={3} sx={{ p: 4, width: '100%', textAlign: 'center' }}>
            {/* Logo Flugo - Centralizada no topo */}
            <Box sx={{ 
             position: 'absolute', 
-            top: 30,
+            top: 100,
             left: '50%', 
             transform: 'translateX(-50%)',
             width:120,
